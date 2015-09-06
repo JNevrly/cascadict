@@ -7,6 +7,7 @@
 '''
 import unittest
 from cascadict import CascaDict, CascaDictError
+import pickle
 
 
 def access_key(dict, key):
@@ -18,7 +19,7 @@ class TestCascaDict(unittest.TestCase):
         self.cd_root = CascaDict([('name', 'Root'), ('color', 'Root color'), ('lvl', 0)]) #usuall, args based init
         self.cd_level1 = CascaDict(name='Lvl1', color='Lvl1 color', lvl= 1, ancestor=self.cd_root) #kwargs based init
         self.cd_level2 = self.cd_level1.cascade()
-        self.cd_level2.update({'name': 'Lvl2', 'color': 'Lvl2 color', 'lvl': 2}) #cascade&update style init
+        self.cd_level2.update({'name': 'Lvl2', 'color': 'Lvl2 color', 'lvl': 2, 'nest': {'name': 'nested_lvl_2', 'lvl': 22, 'color': 'nested_color lvl2'}}) #cascade&update style init
         
         #Insert something with to level1
         self.cd_level1['test_insert'] = 'contents'
@@ -97,6 +98,19 @@ class TestCascaDict(unittest.TestCase):
             del self.cd_level2['color']
             del self.cd_level2['color']
         self.assertRaises(CascaDictError, delsomething)
+        
+    def test_pickle(self):
+        self.cd_level2['nest']['lvl'] = 23
+        ptemp = pickle.dumps(self.cd_level2)
+        temp = pickle.loads(ptemp)
+        print temp['nest'].get_cascaded('lvl')
+        self.assertTrue(temp['nest'].get_cascaded('lvl') == [23, 22])
+        
+        
+    def test_nesting(self):
+        self.cd_level2['nest']['color'] = 'nested overriden color'
+        print(self.cd_level2['nest'].get_cascaded('color'))
+        
 #     def test_viewkeys(self):
 #         print self.cd_level2.viewkeys()
 

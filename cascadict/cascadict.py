@@ -92,7 +92,10 @@ class CascaDict(collections.MutableMapping):
             _value = CascaDict(value).cascade()
         
         if key in self and isinstance(self[self.__keytransform__(key)], CascaDict) and isinstance(value, (CascaDict, dict)):
-            self.final_dict[self.__keytransform__(key)].update(value)
+            if key in self.final_dict:
+                self.final_dict[self.__keytransform__(key)].update(value)
+            else:
+                self.final_dict[self.__keytransform__(key)] = self[self.__keytransform__(key)].cascade(value)
         else:
             self.final_dict[self.__keytransform__(key)] = _value
 
@@ -107,9 +110,12 @@ class CascaDict(collections.MutableMapping):
             
     def __iter__(self):
         temp_dict = self
+        used_keys = []
         while True:
             for (key, value) in temp_dict.final_dict.items():
-                yield key
+                if not (key in used_keys):
+                    yield key
+                    used_keys.append(key)
                  
             if temp_dict.is_root():
                 return
@@ -139,14 +145,6 @@ class CascaDict(collections.MutableMapping):
     
     def __sizeof__(self):
         return self.__flatten__().__sizeof__()
-    
-    #Pickling functions                
-    def __reduce_ex__(self, protocol):
-        return self.__flatten__().__reduce_ex__(protocol)
- 
-    def __reduce__(self):
-        return self.__flatten__().__reduce__()
-    #End of pickling
     
 #     def items(self, level='top'):
 #         return self.__flatten__(level).items()
