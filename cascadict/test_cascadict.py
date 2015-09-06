@@ -57,21 +57,21 @@ class TestCascaDict(unittest.TestCase):
         self.assertTrue('test_insert_root' in self.cd_level1)
         
     def test_final_dict(self):
-        print self.cd_level1.final_dict
+        print(self.cd_level1.final_dict)
         
     def test_flatten_dict_top(self):
         temp = self.cd_level1.__flatten__()
-        print temp
+        print(temp)
         self.assertTrue(temp['name'] == 'Lvl1')
     
     def test_flatten_dict_bottom(self):
         temp = self.cd_level1.__flatten__(level='bottom')
-        print temp
+        print(temp)
         self.assertTrue(temp['name'] == 'Root')
         
     def test_get_cascaded(self):
         temp = self.cd_level2.get_cascaded('lvl')
-        print temp
+        print(temp)
         self.assertTrue(temp == [2, 1, 0])
         
     def test_get_cascaded_default(self):
@@ -79,14 +79,14 @@ class TestCascaDict(unittest.TestCase):
         self.assertTrue(temp == 'nic')
         
     def test_items(self):
-        print self.cd_level2.items()
+        print(self.cd_level2.items())
         
     def test_inherit(self):
         temp = self.cd_level2.cascade({'name':'lvl3', 'lvl':3})
         self.assertTrue(temp['name'] == 'lvl3')
     
     def test_repr(self):
-        print self.cd_level2
+        print(self.cd_level2)
         
     def test_delete_valid(self):
         del self.cd_level2['color']
