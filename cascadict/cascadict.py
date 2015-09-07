@@ -65,10 +65,11 @@ class CascaDict(collections.MutableMapping):
                    
         self.update(dict(*args, **kwargs))
         
-        #Cascade nested cascadicts
+        #Cascade remaining nested cascadicts
         if not self.is_root():
             for k,v in self._ancestor.items():
-                if isinstance(v, CascaDict):
+                #If k is in final dict, it means it has been already cascaded during update.
+                if isinstance(v, CascaDict) and not (k in self.final_dict):
                     self.final_dict[k]  = v.cascade()     
 
     def __getitem__(self, key):
@@ -83,7 +84,6 @@ class CascaDict(collections.MutableMapping):
                     temp_dict = temp_dict.get_ancestor()
 
     def __setitem__(self, key, value):
-        
         _value = value
         #This is the entire mechanism of nesting here:
         if isinstance(value, CascaDict):
@@ -176,7 +176,7 @@ class CascaDict(collections.MutableMapping):
         else:
             return CascaDict(dict)
     
-    def __flatten__(self, level='top'):
+    def __flatten__(self, level='top', recursive=True):
  
         """ Create flat dictionary containing keys even from ancestors, but only top level values in case of overlapping keys.
         
@@ -184,9 +184,9 @@ class CascaDict(collections.MutableMapping):
                          Top level flattens with top level values for overlapping keys.
                          Bottom level flattens with bottom level (=closer to root) for overlapping keys.
         """
-        if level == 'skim':
-            return self.final_dict
-        
+        if not (level in ['top', 'bottom', 'skim']):
+            raise CascaDictError("Unknown level '{0}'".format(level))
+
         flat_dict = {}
         temp_dict = self
         while True:
@@ -194,12 +194,16 @@ class CascaDict(collections.MutableMapping):
                 
                 if level == 'top':
                     if key not in flat_dict:
+                        if recursive and isinstance(value, CascaDict):
+                            value = value.__flatten__(level=level, recursive=recursive)
                         flat_dict[key] = value 
                     
-                elif level == 'bottom':
+                else:
+                    if recursive and isinstance(value, CascaDict):
+                            value = value.__flatten__(level=level, recursive=recursive)
                     flat_dict[key] = value
                     
-            if temp_dict.is_root():
+            if temp_dict.is_root() or (level == 'skim'):
                 return flat_dict
             else:
                 temp_dict = temp_dict.get_ancestor()              
@@ -249,7 +253,7 @@ class CascaDict(collections.MutableMapping):
     def has_key(self, k):
         return self.__contains__(k)
     
-    def copy_flat(self, level='top'):
-        return self.__flatten__(level)
+    def copy_flat(self, level='top', recursive=True):
+        return self.__flatten__(level=level, recursive=recursive)
             
       
