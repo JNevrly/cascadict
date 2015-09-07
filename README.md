@@ -4,7 +4,7 @@ This little class aims to solve just another almost nonexistent problem -
 handling of cascading properties. To describe it simply, CascaDict implements
 something like class inheritance, but on dictionary-key level. See the code:
 
-
+```python
     from cascadict import CascaDict
     
     fruit_properties = CascaDict({'type':'fruit', 'taste':'sweet', 'color':"I don't have any color, I'm an abstract concept!"})
@@ -15,7 +15,7 @@ something like class inheritance, but on dictionary-key level. See the code:
 
     blue
     sweet
-    
+```
 
 Internally, it's not just copy and append, one can also access all the cascaded
 values:
