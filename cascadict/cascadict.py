@@ -56,6 +56,18 @@ class CascaDictError(Exception):
 class CascaDict(collections.MutableMapping):
     
     def __init__(self, *args, **kwargs):
+        """ Same as :class:`dict` with one extra keyword.
+        
+        :param ancestor: Reference to CascaDict object which should serve as ancestor. 
+            There are several ways to initialize CascaDict from previous CascaDict::
+            
+                >>> a = CascaDict()
+                >>> #Following initializations are equivalent:
+                >>> b = CascaDict(ancestor=a)
+                >>> c = a.cascade()
+
+                
+        """
         self.final_dict = dict()
         
         #assign ancestor and remove it from kwargs if necessary
@@ -171,18 +183,30 @@ class CascaDict(collections.MutableMapping):
     
     @classmethod
     def new_cascadict(cls, dict):
+        """ Helper constructor for automatically cascading new CascaDict from object,
+        regardless if it's another :class:`CascaDict` or simple :class:`dict`.
+        
+        :param dict: :class:`CascaDict` or  :class:`dict` object which will be cascaded.
+        """
         if isinstance(dict, CascaDict):
             return dict.cascade()
         else:
             return CascaDict(dict)
     
     def __flatten__(self, level='top', recursive=True):
- 
-        """ Create flat dictionary containing keys even from ancestors, but only top level values in case of overlapping keys.
+        """ Create flat :class:`dict` containing all keys (even from ancestors). 
+            In case of overlapping values, value according to the 'level' argument will be selected.
         
-        :param level:    ['top', 'bottom', 'skim']
-                         Top level flattens with top level values for overlapping keys.
-                         Bottom level flattens with bottom level (=closer to root) for overlapping keys.
+        :param level:    ['top', 'bottom', 'skim'] Default: 'top'
+                         
+                         - 'top' level flattens with top level values for overlapping keys.
+                         - 'bottom' level flattens with bottom level (=closer to root) for overlapping keys.
+                         - 'skim' means that only values which were added to the final :class:`CascaDict`
+                             will be returned. Ancestor values are ignored, even those which are not overlapped.
+                             
+        :param recursive: [:const:`True`, :const:`False`] Default :const:`True`. 
+                            If :const:`True`, same flattening protocol is used for nested CascaDicts. 
+                            Otherwise nested CascaDicts are simply referenced.
         """
         if not (level in ['top', 'bottom', 'skim']):
             raise CascaDictError("Unknown level '{0}'".format(level))
@@ -209,10 +233,14 @@ class CascaDict(collections.MutableMapping):
                 temp_dict = temp_dict.get_ancestor()              
     
     def cascade(self, *args, **kwargs):
+        """Create new empty :class:`CascaDict` cascading from this one.
+        """
         kwargs['ancestor'] = self
         return CascaDict(*args, **kwargs)
     
     def get_ancestor(self):
+        """ Return :class:`CascaDict` from which is current :class:`CascaDict` cascaded.
+        """
         return self._ancestor or self #self ancestor must not be none
     
     def get_root(self):
@@ -224,7 +252,7 @@ class CascaDict(collections.MutableMapping):
         return temp
     
     def is_root(self):
-        """ Returns true if CascaDict has no ancestors (is root of the ancestor tree).
+        """ Returns :const:`True` if CascaDict has no ancestors (is root of the ancestor tree).
         """
         return (self._ancestor is self)
         
@@ -254,6 +282,9 @@ class CascaDict(collections.MutableMapping):
         return self.__contains__(k)
     
     def copy_flat(self, level='top', recursive=True):
+        """ Return flat copy (:class:`dict`) of the :class:`CascaDict`.
+            Wrapper function for :func:`__flatten__`
+        """
         return self.__flatten__(level=level, recursive=recursive)
             
       
