@@ -9,7 +9,7 @@ CascaDict - cascading dictionary for Python
 This little class aims to solve just another almost nonexistent problem
 - handling of cascading properties. To describe it simply, CascaDict
 implements something like class inheritance, but on dictionary-key
-level. See the code:
+level. See the examples:
 
 .. code:: python
 

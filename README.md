@@ -2,7 +2,7 @@
 
 This little class aims to solve just another almost nonexistent problem -
 handling of cascading properties. To describe it simply, CascaDict implements
-something like class inheritance, but on dictionary-key level. See the code:
+something like class inheritance, but on dictionary-key level. See the examples:
 
 ```python
 from cascadict import CascaDict
@@ -147,6 +147,8 @@ for k,v in properties.items():
 process_2: {'login_required': True, 'logging': {'handler': 'stream', 'level': 'ERROR'}, 'port': 6005, 'halt_on_error': True}
 process_1: {'logging': {'handler': 'file', 'level': 'DEBUG'}, 'login_required': False, 'max_runtime': 100, 'port': 5556}
 ```
+
+See full documentation on [ReadTheDocs](http://cascadict.readthedocs.org).
 
 ## That's it
 
