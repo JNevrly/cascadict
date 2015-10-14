@@ -1,1 +1,1 @@
-from cascadict import CascaDict, CascaDictError
+from .cascadict import CascaDict, CascaDictError
