@@ -2,3 +2,4 @@ temp/
 docs/_build/
 .tox/
 *.pyc
+MANIFEST
