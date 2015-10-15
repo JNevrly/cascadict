@@ -103,7 +103,7 @@ class TestCascaDict(unittest.TestCase):
         self.cd_level2['nest']['lvl'] = 23
         ptemp = pickle.dumps(self.cd_level2)
         temp = pickle.loads(ptemp)
-        print temp['nest'].get_cascaded('lvl')
+        print(temp['nest'].get_cascaded('lvl'))
         self.assertTrue(temp['nest'].get_cascaded('lvl') == [23, 22])
         
         
