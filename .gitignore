@@ -3,3 +3,5 @@ docs/_build/
 .tox/
 *.pyc
 MANIFEST
+*.egg-info/
+.vscode/
