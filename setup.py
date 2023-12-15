@@ -5,7 +5,7 @@ history = open('HISTORY.rst').read().replace('.. :changelog:', '')
 setup(
   name = 'cascadict',
   packages = ['cascadict'], # this must be the same as the name above
-  version = '0.8.4',
+  version = '0.8.5',
   description = (
     'Cascading dictionary - CascaDict implements something like class inheritance, but on dictionary-key level.'
     ' Ideal for representing cascading properties, e.g. configurations with default parameters etc.'

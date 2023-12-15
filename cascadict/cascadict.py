@@ -47,13 +47,22 @@ Does not support views and comparisons are not implemented properly. Pickling fl
 .. moduleauthor:: JNevrly
 
 '''
+import sys
 import collections
+
+# Compatibility with python 3.10 and higher
+import collections 
+if sys.version_info.major == 3 and sys.version_info.minor >= 10:
+
+    from collections.abc import MutableMapping
+else:
+    from collections import MutableMapping
 
 class CascaDictError(Exception):
     pass
 
 
-class CascaDict(collections.MutableMapping):
+class CascaDict(MutableMapping):
     
     def __init__(self, *args, **kwargs):
         """ Same as :class:`dict` with one extra keyword.
